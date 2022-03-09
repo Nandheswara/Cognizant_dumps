@@ -1,4 +1,4 @@
-# Cognizant dupms
+# Cognizant dumps
 # Cognizant code challange
 # Cognizant Hands On
 # Cognizant Adobe
