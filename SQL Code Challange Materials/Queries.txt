@@ -1,0 +1,298 @@
+
+A+B+C+D  20+20+20+40
+
+A. DDL & DML -20
+=======================================================================================================
+
+1. Add a new column
+alter table buses add Ac_Available
+varchar2(10);
+--------------------------------------------------------------------------------------------------------
+2.Create Course table
+
+    1 create table COURSE(
+    2 courseid number(4) primary key,
+    3 CourseName varchar2(20), 
+    4 Duration number(2),
+    5 Fees number(7,2));
+-------------------------------------------------------------------------------------------------------
+
+3.Establish Referential Integrity
+
+   alter table PointofInterest add
+   constraint FK foreign key (townID)
+   references Town(townID);
+------------------------------------------------------------------------------------------------------
+
+4.Change the Name of PointOfInterest Table
+
+  ALTER TABLE PointOfInterest RENAME TO TOURISTSPOTS;
+-------------------------------------------------------------------------------------------------------
+5.Insert Records - Department
+
+   insert into Department values(1,'CSE',3);
+   insert into Department values(2,'IT',3);
+   insert into Department values(3,'SE',3);
+--------------------------------------------------------------------------------------------------------
+
+6.Insert Records - Student
+
+  insert into student(student_id,student_name,address,city,department_id) values (1,'Anandhi','LMC','Coimbatore',1);
+  insert into student(student_id,student_name,address,city,department_id) values (2,'Anitha','ABC','Salem',2);
+---------------------------------------------------------------------------------------------------------------------
+
+7.Delete Records - Payments
+delete from payments where discount_id='D1';
+----------------------------------------------------------------------------------------------------------
+8.Update star-rating in Resort Table
+
+UPDATE resort set starRating=4.2 where resortName='TREE OF LIFE RESORT';
+-------------------------------------------------------------------------------------------------------
+9.Remove Resort Details
+delete from Resort where ResortID=1002;
+=====================================================================================================
+
+B. select statement- 20
+-----------------------------------------------------------------------------------------------------
+1. Bus number without duplicates
+
+    select distinct bus_no 
+    from schedule
+    order by bus_no desc;
+----------------------------------------------------------------------------------------------------
+
+2.Course Details
+ select * from course order by courseid;
+-----------------------------------------------------------------------------------------------
+3 Student Name based on a condition
+
+select FirstName from STUDENT where FirstName LIKE 'S%n%' order by FirstName ;
+---------------------------------------------------------------------------------------------------
+4.Display Tourist Spots
+
+   select pointID,describe
+   from Pointofinterest
+   where closetime >= '8PM'
+   order by pointid asc;
+-----------------------------------------------------------------------------------------------
+5.Remove Resort Details
+
+ delete from Resort where Resortid=1002;
+
+==================================================================================================
+C. Function-Scalar & Aggregate
+================================
+1. Maximum Bus Tickets Fare
+Write a query to display maximum bus tickets fare and give an alias name as Maximum_Amount
+
+   select max(fare) as Maximum_Amount from tickets;
+=======================================================================================================
+2.Average mark greater than 80
+
+Write a query to display list of student ids and average mark in 2 decimal places if their average mark is greater than 80. Give an alias to average mark as avg_mark.
+ Sort the result based on average mark. 
+
+    select student_id, cast(avg(value) as decimal(10,2)) as avg_mark from mark
+    group by student_id
+     having avg(value)>80
+    order by avg_mark;
+=======================================================================================================================================
+3.Latest date of registration
+Write a query to display the Latest date with alias name as LATESTDATE in which registration happened.  
+
+    select max(doj) as LATESTDATE from registration 
+    order by doj desc;
+=========================================================================================================================================
+4.Number of courses Registered
+Write a query to display student ID and number of course registered by 
+students. Display student ID only if student has registered for a 
+course. Give alias name for the count as NOOFCOURSES.   
+Sort the result based on count in descending and student ID  ascending.  
+
+    select studid, count(courseid) as NOOFCOURSES
+    from registration
+    group by studid
+    order by NOOFCOURSES desc,studid asc;
+========================================================================================================
+5. Change Case of Guest Name
+   Write a query to display the guest name in proper case.
+   For instance the guest name "geeta govind"  should be displayed as
+   "Geeta Govind". Give alias name as GUESTNAME. 
+   Sort the result based on Guest Name.
+
+    select initcap(name) as GUESTNAME from guest 
+    order by name;
+==========================================================================================================
+6.Count the Characters in Review Comments
+
+ Write a query to display the total count of characters in the review comment given by the guest. 
+Display  the result set in the ascending order of count of characters. Give alias name as COMMENTS_LENGTH.
+ Write a query to display the total count of characters in the
+ review comment given by the guest. Display  the result set in
+ the ascending order of count of characters. Give alias name as
+ COMMENTS_LENGTH.
+
+    select length(comments) as COMMENTS_LENGTH
+    from review
+    order by COMMENTS_LENGTH;
+============================================================================================================
+7.Find the Hottest and Coldest Temperature
+ Select the  highest summer & lowest winter temperature and display
+ the output as "HOT SUMMER" and "CHILL WINTER"
+
+ select max(summertemp) as "HOT SUMMER", min(wintertemp) as "CHILL WINTER" from town;
+=======================================================================================================
+8.Comments based on Star Rating
+
+Guest wants to display Resort Id, Name and Comments of the resort based on it's star rating. 
+
+Comments of the resort displays as follows
+
+If rating is between 5.0 to 4.5 then display the comments as 'Excellent Resort'
+
+If rating is between 4.4 to 4.0 then display the comments as 'Very Good Resort'
+
+else display 'Good Resort' . Give alias name to this result as Comments. 
+
+Sort the result based on resort id. 
+
+
+    1 select resortID,resortName,
+    2 case
+    3 when(starrating<=5.0 and starrating>=4.5)
+    4 then 'Excellent Resort'
+    5 when(starrating<=4.4 and starrating>=4.0)
+    6 then 'Very Good Resort'
+    7 else 'Good Resort'
+    8 end comments
+    9 from Resort;
+=====================================================================================================
+9. Total amount paid by each guest
+Managements wants to know total amount paid by each guest for each resort. 
+
+Write a query display resortid, guestid and total amount paid by them. Give total amount paid as TotalCost. 
+
+Sort the result based on resort id and guest id. 
+
+[Hint: A guest can book the same resort for multiple times. The total amount should be calculated for all booking]
+
+    1 select resortid, guestid,
+    2 (sum(totalcharge)) as TotalCost
+    3 from booking
+    4 group by guestid, resortid
+    5 order by resortid, guestid;
+
+===========================================================================================================
+
+D.Join & SubQueries -40
+===================================================================================================
+
+1. Buses based on Source and Destination
+
+Write a query to display list of bus number and names where
+ source and destination of a bus is the destination and source of 
+another bus. Display unique records in ascending order by bus_no.
+
+    1 select b.bus_no,b.bus_name 
+    2 from buses b join(select s1.bus_no 
+    3 from schedule s1 join schedule s2 
+    4 on s1.source=s2.destination and 
+    5 s1.destination=s2.source) s 
+    6 on b.bus_no=s.bus_no 
+    7 order by bus_no;*
+    8 
+    9 select b.bus_no,b.bus_name
+   10 from buses b,schedule s1,schedule s2 
+   11 where b.bus_no=s1.bus_no and
+   12 s1.source=s2.destination 
+   13 and s2.source=s1.destination and 
+   14 s1.bus_no!=s2.bus_no order by 1;
+
+
+======================================================================================================
+
+2.User details based on Cancellation
+Write query to display user_id and user name of those who have canceled their tickets and display records in ascending order by user_id. (Hint: Take user,tickets and cancellation tables)
+
+    1 SELECT u.USER_ID,u.NAME
+    2 FROM ((users u inner join tickets t
+    3 ON u.USER_ID=t.USER_ID) 
+    4 inner JOIN cancellation c ON t.ticket_id = c.ticket_id)
+    5 WHERE cancellation_id is not null 
+    6 group by u.USER_ID,u.NAME
+    7 ORDER BY 1;
+======================================================================================================
+3.Department Name with Maximum Student Count
+Write a query to display the name of the department that has the maximum student count.
+
+1 SELECT department_name
+    2 FROM
+    3 (
+    4 SELECT d.department_name,
+    5     COUNT(*)AS nr_students
+    6 FROM department d
+    7 JOIN student s
+    8 ON d.department_id=
+    9 s.department_id
+   10 GROUP BY d.department_name
+   11 ORDER BY nr_students DESC
+   12 )
+   13 WHERE ROWNUM<=1;
+
+=======================================================================================================================================================================
+4.Staff details based on subjects
+
+Write a query to display the names of the staff who are handling atleast 1 subject, ordered by name in ascending order.
+
+   1 select staff_name from subject join staff on staff.staff_id = subject.staff_id
+    2 group by staff_name having count(subject_id)>0
+    3 order by staff_name;
+==========================================================================================================================================================================
+5.Staff details without handling any subjects
+Write a query to display the names of the staff who are not handling any subject, ordered by name in ascending order.
+
+ select staff_name from Staff where staff_id NOT IN(select staff_id from subject) order by staff_name asc;
+
+=======================================================================================================================================================================================================
+
+6. Students details based mark scored
+Write a query to display the names of all students who have secured more than 50 in all subjects that they have appeared in, ordered by student name in ascending order.
+
+    1 select student_name from student join mark using(student_id) group by student_name having min(value)>50 order by student_name;
+=========================================================================================================================================================================================================
+7.Student name with Computer Programming marks
+
+Write a query to display the students names and their marks in Computer Programming order by marks in ascending order and then ordered by name in descending order. Give an alias to marks as CP_MARKS.
+
+    1 select student_name,value as CP_MARKS
+    2 from mark m 
+    3 inner join student st on st.student_id=m.student_id
+    4 inner join subject su on su.subject_id=m.student_id
+    5 where su.subject_name='Computer Programming'
+    6 order by m.value,st.student_name desc
+    7 
+===============================================================================================================================================================================================================
+8.Minimum Travel Time
+Display schedule_id, source, destination and travel_time which has minimum travel time. Sort the result based on schedule id
+
+   1 select schedule_id,source,destination,duration from schedule
+    2 where duration=(select min(duration) from schedule)
+    3 order by 1;
+============================================================================================================================================================================================================================================
+9. Student Name alone with DOJ and DOC
+Write a query to display the student's first name, date of joining and completing date of each course. Give alias name for completion date as DOC. Sort the result based on student's first name , Date of joining and Date of Completion. 
+
+[Note: Completion Date can be calculated using DOJ and duration]
+
+    1 select s.firstname, r.doj,add_months(r.doj,c.duration)
+    2 as DOC from Registration r,Course c,student s where
+    3 r.courseid=c.courseid and
+    4 r.studid=s.studid
+    5 order by s.firstname,r.doj,doc;
+====================================================================================================================================================================================================================================================
+10.Student ID with Total Fees
+Write a query to display the student's ID and the total fees paid by each student. Give alias name to total fees as TOTALFEES. Sort the result based on student ID. 
+
+    1 select studid, sum(fees) as "TOTALFEES" from registration join course
+    2 using (courseid) group by studid order by studid;
+======================================================================================================================================================================================================
