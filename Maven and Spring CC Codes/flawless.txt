@@ -1,0 +1,297 @@
+package com.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.model.Academy;
+import com.service.AcademyService;
+
+
+//use appropriate annotation to configure AcademyController as Controller
+@Controller
+public class AcademyController {
+	
+//	Use appropriate annotation
+	@Autowired
+	private AcademyService service;
+	
+	
+	@ModelAttribute("programList")
+	public List<String> populateProduct(){
+		List<String> list=new ArrayList<>();
+		list.add("ClassicDance");
+		list.add("KarnaticVocals");
+		list.add("WesternDance");
+		list.add("Drawing");
+		list.add("Instruments");
+		return list;
+		
+	}
+	
+	 	  	    	    	     	      	 	
+	//invoke the service class - calculateProgramCost method.
+	@RequestMapping(value="/calculate",method=RequestMethod.POST)
+	public String calculateProgramCost(@ModelAttribute("academyBean") Academy academyBean, BindingResult result,
+			ModelMap model) {
+		model.put("cost", service.calculateProgramCost(academyBean));
+		return "estimationPage";
+	}
+	
+	@RequestMapping(value="/enrollmentPage",method=RequestMethod.GET)
+	public String showPage(@ModelAttribute("academyBean") Academy academyBean) {
+		return "enrollmentPage";
+	}
+	
+
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+package com.example.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan({"com.controller","com.model","com.service"})
+public class FlawlessAcademyApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(FlawlessAcademyApplication.class, args);
+	}
+
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+package com.model;
+
+//pojo class with required attributes,getters and setters 
+
+//use appropriate annotation to make this class as component class
+
+
+
+import org.springframework.stereotype.Component;
+
+
+@Component
+
+
+public class Academy {
+	
+	private String program;
+	
+	private double costPerSession;
+	private int weeksPerMonth;
+	// use appropriate annotation for validating daysPerWeek attribute
+	private int sessionsPerWeek;
+		
+	public int getWeeksPerMonth() {
+		return weeksPerMonth;
+	}
+	public void setWeeksPerMonth(int weeksPerMonth) {
+		this.weeksPerMonth = weeksPerMonth;
+	}
+	public double getCostPerSession() {
+		return costPerSession;
+	}
+	public void setCostPerSession(double costPerSession) {
+		this.costPerSession = costPerSession;
+	}
+
+	public int getSessionsPerWeek() {
+		return sessionsPerWeek;
+	}
+	public void setSessionsPerWeek(int sessionsPerWeek) {
+		this.sessionsPerWeek = sessionsPerWeek;
+	}
+	public String getProgram() {
+		return program;
+	}
+	public void setProgram(String program) {
+		this.program = program;
+	}
+
+	
+
+}
+	 	  	    	    		        	 	
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+package com.service;
+
+import org.springframework.stereotype.Service;
+
+import com.model.Academy;
+
+//use appropriate annotation to configure AcademyService as a Service class
+@Service
+public class AcademyService {
+	
+	//calculate the Program cost and return the amount
+	public double calculateProgramCost (Academy academyBean) {
+		
+		double cost=0.0;
+		
+		int week=academyBean.getSessionsPerWeek();
+		String program=academyBean.getProgram();
+		
+		if(program.equalsIgnoreCase("classicaldance")) {
+			cost=week*150.0*4;
+		}else if(program.equalsIgnoreCase("karnaticvocals")) {
+			cost=week*100.0*4;
+		}else if(program.equalsIgnoreCase("westerndance")) {
+			cost=week*125.0*4;
+		}else if(program.equalsIgnoreCase("drawinhg")) {
+			cost=week*130.0*4;
+		}else {
+			cost=week*200.0*4;
+		}
+		
+		
+		//fill the code0	
+	return cost;
+		
+	}
+
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1" isELIgnored="false"%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<body style="background-color:lavender">
+<h1><center> Flawless Academy</center></h1>
+
+
+
+<center>
+
+	<form:form method="post" action="/calculate" modelAttribute="academyBean">
+	
+	<table>
+		<tr>
+			<td>
+				<form:label path="program">Select preferred program</form:label>
+			</td>
+			<td>
+				<form:select path="program" items="${programList}" id="program"></form:select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<form:label path="sessionPerWeek">Number of session per week</form:label>
+			</td>
+			<td>
+				<form:input path="sessionPerWeek" id="sessionPerWeek"/>
+			</td>
+		</tr>
+		<tr>
+			
+			<td>
+				<input type="submit" name="submit" value="Program Cost">
+			</td>
+		</tr>
+	</table>
+
+	</form:form>
+
+</center>
+
+
+
+</body>
+</html>	 	  	    	    	     	      	 	
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+<%@page isELIgnored="false" %>
+<html>
+<body bgcolor="lavender">
+
+<h2>Welcome to Flawless Academy. Your preferred program cost is Rs. ${cost}</h2>
+</body>
+</html>
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+
+
+
+
+
