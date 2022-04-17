@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: CarStoreSystem
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: sg
+Implementation-Vendor-Id: com.cts
+Build-Jdk: 1.8.0_281
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/carstore
+Created-By: Maven Integration for Eclipse
+
