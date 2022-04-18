@@ -1,0 +1,37 @@
+package com.spring.main;
+
+import java.util.Scanner;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.spring.config.ApplicationConfig;
+import com.spring.exception.InvalidGradeException;
+import com.spring.service.StudentService;
+
+public class Driver {
+
+	public static void main(String[] args) {
+		ApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		StudentService studentService = context.getBean(StudentService.class);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter the student name:");
+		String name = sc.nextLine();
+		System.out.println("Enter the admission number:");
+		String admissionNo = sc.nextLine();
+		System.out.println("Enter the grade:");
+		char grade = sc.nextLine().charAt(0);
+		System.out.println("Enter the hostel details");
+		System.out.println("Enter the hostel name:");
+		String hostelName = sc.nextLine();
+		System.out.println("Enter the room rent:");
+		float rent = sc.nextFloat();
+		try {
+			System.out.println(
+					"Hostel fee is Rs:" + studentService.calculateFee(name, admissionNo, grade, hostelName, rent));
+		} catch (InvalidGradeException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+}

@@ -1,0 +1,29 @@
+package com.spring.model;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+//pojo class with required attributes,getters and setters 
+//use appropriate annotation to make this class as component class
+@Component
+public class FeesDiscountDetails {
+
+	@Value("#{${feesDiscount.map}}")
+	private Map<String, Integer> feesDiscount;
+
+	public Map<String, Integer> getFeesDiscount() {
+		return feesDiscount;
+	}
+
+	public void setFeesDiscount(Map<String, Integer> feesDiscount) {
+		this.feesDiscount = feesDiscount;
+	}
+
+	@Override
+	public String toString() {
+		return "FeesDiscountDetails [feesDiscount=" + feesDiscount + "]";
+	}
+
+}
