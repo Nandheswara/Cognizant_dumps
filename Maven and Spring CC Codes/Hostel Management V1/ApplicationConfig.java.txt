@@ -1,0 +1,48 @@
+package com.spring.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+
+import com.spring.bo.StudentBO;
+import com.spring.model.FeesDiscountDetails;
+import com.spring.model.Hostel;
+import com.spring.model.Student;
+import com.spring.service.StudentService;
+
+@Configuration
+@PropertySource("feesDiscountDetails.properties")
+@ComponentScan
+public class ApplicationConfig {
+	@Bean
+	public FeesDiscountDetails feesDiscountDetails() {
+		FeesDiscountDetails feesDiscountDetails = new FeesDiscountDetails();
+		return feesDiscountDetails;
+	}
+
+	@Bean
+	public Hostel hostel() {
+		Hostel hostel = new Hostel();
+		return hostel;
+	}
+
+	@Bean
+	public Student student() {
+		Student student = new Student(hostel());
+		return student;
+	}
+
+	@Bean
+	public StudentBO studentBO() {
+		StudentBO studentBO = new StudentBO();
+		return studentBO;
+	}
+
+	@Bean
+	public StudentService studentService() {
+		StudentService studentService = new StudentService(studentBO());
+		return studentService;
+	}
+
+}
